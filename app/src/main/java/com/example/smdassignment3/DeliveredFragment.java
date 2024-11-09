@@ -1,12 +1,19 @@
-package com.example.navigation_smd_7a;
+package com.example.smdassignment3;
 
+import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +21,10 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class DeliveredFragment extends Fragment {
+
+    Context context;
+    ArrayList<Product> deliveredProducts = new ArrayList<Product>();
+    private DeliveredAdapter adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,6 +58,12 @@ public class DeliveredFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -60,5 +77,31 @@ public class DeliveredFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_delivered, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ListView lvDeliveredOrdersList = view.findViewById(R.id.lvDeliveredOrdersList);
+
+        ProductDB productDB = new ProductDB(context);
+        productDB.open();
+        deliveredProducts = productDB.fetchProducts("delivered");
+        for (Product product : deliveredProducts) {
+            Log.d("ProductInfo", "ID: " + product.getId() + ", Title: " + product.getTitle() +
+                    ", Date: " + product.getDate() + ", Price: " + product.getPrice() +
+                    ", Status: " + product.getStatus());
+        }
+        productDB.close();
+
+            adapter = new DeliveredAdapter(context, R.layout.confirmed_item_design, deliveredProducts);
+        lvDeliveredOrdersList.setAdapter(adapter);
+
+    }
+
+    public void addProductToDeliver(Product p){
+        adapter.addDeliverProduct(p);
+        Toast.makeText(context, "Item Moved to Delivery", Toast.LENGTH_SHORT).show();
     }
 }

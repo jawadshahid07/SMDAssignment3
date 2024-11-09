@@ -1,4 +1,5 @@
-package com.example.navigation_smd_7a;
+package com.example.smdassignment3;
+
 
 public class Product {
     int id;
@@ -16,6 +17,7 @@ public class Product {
         this.price = price;
         this.status = status;
     }
+
 
     public int getId() {
         return id;
@@ -57,3 +59,4 @@ public class Product {
         this.status = status;
     }
 }
+
